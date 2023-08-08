@@ -35,10 +35,10 @@ class Ui:
     def __init__(self, config: Config) -> None:
         self.config = config
         self.black_theme = self.config.config["black theme"]
-        self.duration = self.config.config["time list"]
+        self.timeList = self.config.config["time list"]
         self.canStart = True
         self.Time = time_box.Time(
-            self.duration[0], self.duration[1], self.duration[2], self.duration[3], self.duration[4], self.duration[5])
+            self.timeList[0], self.timeList[1], self.timeList[2], self.timeList[3], self.timeList[4], self.timeList[5])
 
         self.tk = tk.Tk()
         self.tk.title("设置并启动番茄钟")
