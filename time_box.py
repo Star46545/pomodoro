@@ -122,6 +122,9 @@ class adjustTimeButtonGroup(tk.Frame):
             if old < self.max:
                 entry.delete(0, tk.END)
                 entry.insert(0, str(old+1))
+            elif old > self.max:
+                entry.delete(0, tk.END)
+                entry.insert(0, str(self.max))
         except ValueError:
             pass
 
@@ -131,12 +134,15 @@ class adjustTimeButtonGroup(tk.Frame):
             if old > self.min:
                 entry.delete(0, tk.END)
                 entry.insert(0, str(old-1))
+            elif old < self.min:
+                entry.delete(0, tk.END)
+                entry.insert(0, str(self.min))
         except ValueError:
             pass
 
 
 class TimeBox(tk.Frame):
-    def __init__(self, master, time_: Time = Time()) -> None:
+    def __init__(self, master, time_: Time = Time([0, 0, 0, 0, 0, 0])) -> None:
         super().__init__(master)
         self.time = time_
 
@@ -204,6 +210,16 @@ class TimeBox(tk.Frame):
         minute = int(self.timeInputEntry_minute.get())
         second = int(self.timeInputEntry_second.get())
         self.time.setTime(year, month, day, hour, minute, second)
+
+    def setEdge(self, min_timelist: list = [0, 0, 0, 0, 0, 0], max_timelist: list = [9999, 12, 31, 23, 59, 59]):
+        box_list = [self.timeInputEntry_year_adjustButton,
+                    self.timeInputEntry_month_adjustButton,
+                    self.timeInputEntry_day_adjustButton,
+                    self.timeInputEntry_hour_adjustButton,
+                    self.timeInputEntry_minute_adjustButton,
+                    self.timeInputEntry_second_adjustButton]
+        for edge in zip(min_timelist, max_timelist, box_list):
+            edge[box_list].setEdge(edge[0], edge[1])
 
 
 if __name__ == "__main__":

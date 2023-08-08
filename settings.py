@@ -35,6 +35,8 @@ class Ui:
         self.black_theme = self.config.config["black theme"]
         self.duration = self.config.config["time list"]
         self.canStart = True
+        self.Time = time_box.Time(
+            self.duration[0], self.duration[1], self.duration[2], self.duration[3], self.duration[4], self.duration[5])
 
         self.tk = tk.Tk()
         self.tk.title("设置并启动番茄钟")
@@ -49,7 +51,7 @@ class Ui:
         # 选择持续某时长
         self.keepLockFor_radioButton = tk.Radiobutton(
             self.tk, text="持续", variable=self.radioButtonVariable, value=1)
-        self.keepLockFor_radioButton.grid(row=0, column=11)
+        self.keepLockFor_radioButton.grid(row=0, column=1)
 
         # 选择浅色模式或者暗色模式
         self.theme_radioButtonVariable = tk.IntVar()
@@ -59,11 +61,11 @@ class Ui:
         self.theme_white.grid(row=1, column=0)
         self.theme_black = tk.Radiobutton(
             self.tk, text="暗色模式", variable=self.theme_radioButtonVariable, value=1)
-        self.theme_black.grid(row=1, column=11)
+        self.theme_black.grid(row=1, column=1)
 
         # 时间控件，自制
-        self.timeBox = time_box.TimeBox(self.tk, time_box.Time(
-            self.duration[0], self.duration[1], self.duration[2], self.duration[3], self.duration[4], self.duration[5]))
+        self.timeBox = time_box.TimeBox(self.tk, self.Time)
+        self.timeBox.grid(row=2, column=0, columnspan=2)
 
         self.start_button = tk.Button(self.tk, text="开始", padx=25, command=lambda: [
                                       self.set_theme_type(), self.set_duration(), self.saveConfig(), self.start()])
@@ -77,31 +79,30 @@ class Ui:
     def set_duration(self):
         # 设置持续时长
         try:
-            year = int(self.timeInputEntry_year.get())
-            month = int(self.timeInputEntry_month.get())
-            day = int(self.timeInputEntry_day.get())
-            hour = int(self.timeInputEntry_hour.get())
-            minute = int(self.timeInputEntry_minute.get())
-            second = int(self.timeInputEntry_second.get())
-            self.config.config["time list"] = [
-                year, month, day, hour, minute, second]
+            self.timeBox.setTime()
+            self.config.config["time list"] = self.Time.timeList
             self.canStart = True
         except ValueError:
             self.canStart = False
+            return
+
+        self.duration = self.Time.getTimestamp(
+            self.radioButtonVariable.get() + 1)
 
     def saveConfig(self):
         with open("config.json", 'w') as f:
             f.write(json.dumps(self.config.config))
 
     def start(self):
-        timestamp = int((self.timeList[0]*365 + Tools.month_to_day(self.timeList[0], self.timeList[1]) +
-                        self.timeList[2])*24*60*60 + self.timeList[3]*60*60 + self.timeList[4]*60 + self.timeList[5])
-        if self.radioButtonVariable.get() == 0:
-            endtime = timestamp
-        else:
-            endtime = int(time.time()) + timestamp
+        if self.canStart:
+            timestamp = int((self.timeList[0]*365 + Tools.month_to_day(self.timeList[0], self.timeList[1]) +
+                            self.timeList[2])*24*60*60 + self.timeList[3]*60*60 + self.timeList[4]*60 + self.timeList[5])
+            if self.radioButtonVariable.get() == 0:
+                endtime = timestamp
+            else:
+                endtime = int(time.time()) + timestamp
 
-        lock_ui = main_ui.Ui(endtime, self.config.config["black theme"])
+            lock_ui = main_ui.Ui(endtime, self.config.config["black theme"])
 
 
 if __name__ == "__main__":
