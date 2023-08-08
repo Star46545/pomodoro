@@ -11,12 +11,12 @@ class Ui:
         self.run = False
         self.finished = False
         self.black_color = black_color
-        # self.press_keys = ['shift', 'ctrl', 'alt', 'windows']
+        self.press_keys = ['shift', 'ctrl', 'alt', 'windows']
         self.press_keys = []
 
         # 窗口设置
         self.window = tk.Tk()
-        # self.window.attributes("-topmost", True)
+        self.window.attributes("-topmost", True)
         self.window.attributes("-fullscreen", True)
         self.window.protocol("WM_DELETE_WINDOW", lambda: None)
         self.window.title("番茄钟")
@@ -25,7 +25,6 @@ class Ui:
         self.frame = tk.Frame(self.window, width=size()[0], height=size()[1])
         self.frame.bind(
             "<Button-1>", self.change_color)
-        self.frame.pack()
 
         # 时间标签
         self.time = tk.StringVar()
@@ -47,6 +46,9 @@ class Ui:
             self.frame.configure(bg="#000000")
             self.timelabel.configure(fg="#FFFFFF", bg="#000000")
             self.endtime_label.configure(fg="#FFFFFF", bg="#000000")
+
+        # frwindow
+        self.frame.pack()
 
     def begin(self):
         self.run = True
@@ -73,7 +75,7 @@ class Ui:
     def keep_topmost_and_press_key(self):
         while True:
             time.sleep(0.3)
-            # self.window.attributes("-topmost", True)
+            self.window.attributes("-topmost", True)
             for key in self.press_keys:
                 keyUp(key)
                 keyDown(key)
