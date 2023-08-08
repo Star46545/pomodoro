@@ -142,7 +142,7 @@ class adjustTimeButtonGroup(tk.Frame):
 
 
 class TimeBox(tk.Frame):
-    def __init__(self, master, time_: Time = Time([0, 0, 0, 0, 0, 0])) -> None:
+    def __init__(self, master, time_: Time = Time(0, 0, 0, 0, 0, 0)) -> None:
         super().__init__(master)
         self.time = time_
 

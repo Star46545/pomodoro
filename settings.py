@@ -95,14 +95,14 @@ class Ui:
 
     def start(self):
         if self.canStart:
-            timestamp = int((self.timeList[0]*365 + Tools.month_to_day(self.timeList[0], self.timeList[1]) +
-                            self.timeList[2])*24*60*60 + self.timeList[3]*60*60 + self.timeList[4]*60 + self.timeList[5])
+            timestamp = self.duration
             if self.radioButtonVariable.get() == 0:
                 endtime = timestamp
             else:
                 endtime = int(time.time()) + timestamp
 
             lock_ui = main_ui.Ui(endtime, self.config.config["black theme"])
+            lock_ui.window.begin()
 
 
 if __name__ == "__main__":
