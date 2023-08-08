@@ -87,6 +87,7 @@ class Time:
                     timeString += f'{time_} '
                 self.timestamp = time.mktime(
                     time.strptime(timeString, "%Y %m %d %H %M %S "))
+                return self.timestamp
             else:
                 raise ValueError("时间不可用")
         elif mode == 2:
