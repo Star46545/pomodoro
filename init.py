@@ -10,14 +10,6 @@ def getPath():
 
 
 if __name__ == "__main__":
-    try:
-        with open(f'{startupPath}\\pomodoro.pyw', 'w') as f:
-            f.write(f'import os\nos.startfile("{getPath()}\\main_ui.pyw")')
-    except IOError as err:
-        print(f'发生了错误:IOError:{err}')
-    except:
-        print('发生了未知错误，你也许可以尝试使用管理员权限运行我(这不一定能解决问题！)')
-
     if not os.path.exists(f'{getPath()}\\config.json'):
         try:
             with open(f'{getPath()}\\config.json', 'w') as f:
@@ -36,5 +28,5 @@ if __name__ == "__main__":
         except Exception as err:
             print('初始化任务文件发生错误！')
 
-    print('初始化结束')
+    print('初始化结束，需要手动添加启动项')
     _ = input("按回车键退出")
