@@ -69,9 +69,10 @@ class Ui:
 
         # 选择浅色模式或者暗色模式
         self.theme_radioButtonVariable = tk.IntVar()
+        self.theme_radioButtonVariable.set(
+            {False: 0, True: 1}[self.black_theme])
         self.theme_white = tk.Radiobutton(
             self.tk, text="浅色模式", variable=self.theme_radioButtonVariable, value=0)
-        self.theme_white.select()
         self.theme_white.grid(row=1, column=0)
         self.theme_black = tk.Radiobutton(
             self.tk, text="暗色模式", variable=self.theme_radioButtonVariable, value=1)
