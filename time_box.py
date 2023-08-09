@@ -102,7 +102,7 @@ class Time:
 
 
 class adjustTimeButtonGroup(tk.Frame):
-    def __init__(self, master, entry: tk.Entry, min_: int, max_: int,):
+    def __init__(self, master, entry: tk.Entry, min_: int | None, max_: int | None):
         super().__init__(master)
         self.min = min_
         self.max = max_
@@ -113,13 +113,18 @@ class adjustTimeButtonGroup(tk.Frame):
         self.addButton.grid(row=0, column=0)
         self.subtractButton.grid(row=0, column=1)
 
-    def setEdge(self, min_, max_):
+    def setEdge(self, min_: int | None, max_: int | None):
         self.min = min_
         self.max = max_
 
     def add(self, entry: tk.Entry):
         try:
             old = int(entry.get())
+
+            # self.max是None代表没有最高
+            if self.max is None:
+                return
+
             if old < self.max:
                 entry.delete(0, tk.END)
                 entry.insert(0, str(old+1))
@@ -132,6 +137,11 @@ class adjustTimeButtonGroup(tk.Frame):
     def subtract(self, entry: tk.Entry):
         try:
             old = int(entry.get())
+
+            # self.min是None代表没有最低
+            if self.min is None:
+                return
+
             if old > self.min:
                 entry.delete(0, tk.END)
                 entry.insert(0, str(old-1))
@@ -203,7 +213,7 @@ class TimeBox(tk.Frame):
         self.timeInputLabel_minute.grid(row=2, column=13)
         self.timeInputLabel_second.grid(row=2, column=16)
 
-    def setTime(self):
+    def getTime(self):
         year = int(self.timeInputEntry_year.get())
         month = int(self.timeInputEntry_month.get())
         day = int(self.timeInputEntry_day.get())
@@ -212,7 +222,22 @@ class TimeBox(tk.Frame):
         second = int(self.timeInputEntry_second.get())
         self.time.setTime(year, month, day, hour, minute, second)
 
-    def setEdge(self, min_timelist: list = [0, 0, 0, 0, 0, 0], max_timelist: list = [9999, 12, 31, 23, 59, 59]):
+    def setTime(self, timeList: list = [0, 0, 0, 0, 0, 0]):
+        self.timeInputEntry_year.delete(0, tk.END)
+        self.timeInputEntry_month.delete(0, tk.END)
+        self.timeInputEntry_day.delete(0, tk.END)
+        self.timeInputEntry_hour.delete(0, tk.END)
+        self.timeInputEntry_minute.delete(0, tk.END)
+        self.timeInputEntry_second.delete(0, tk.END)
+
+        self.timeInputEntry_year.insert(0, str(timeList[0]))
+        self.timeInputEntry_month.insert(0, str(timeList[1]))
+        self.timeInputEntry_day.insert(0, str(timeList[2]))
+        self.timeInputEntry_hour.insert(0, str(timeList[3]))
+        self.timeInputEntry_minute.insert(0, str(timeList[4]))
+        self.timeInputEntry_second.insert(0, str(timeList[5]))
+
+    def setEdge(self, min_timelist: list = [0, 0, 0, 0, 0, 0], max_timelist: list = [None, 12, 31, 23, 59, 59]):
         box_list = [self.timeInputEntry_year_adjustButton,
                     self.timeInputEntry_month_adjustButton,
                     self.timeInputEntry_day_adjustButton,
@@ -220,7 +245,20 @@ class TimeBox(tk.Frame):
                     self.timeInputEntry_minute_adjustButton,
                     self.timeInputEntry_second_adjustButton]
         for edge in zip(min_timelist, max_timelist, box_list):
-            edge[box_list].setEdge(edge[0], edge[1])
+            edge[2].setEdge(edge[0], edge[1])
+        self.getTime()
+        box_list = [self.timeInputEntry_year, self.timeInputEntry_month, self.timeInputEntry_day,
+                    self.timeInputEntry_hour, self.timeInputEntry_minute, self.timeInputEntry_second]
+        for time in zip(self.time.timeList, box_list, min_timelist, max_timelist):
+            # time[0]:当前时间 time[1]:对应的文本框 time[2]:相应最小值 time[3]相应最大值
+            if time[2] is not None:
+                if time[0] < time[2]:
+                    time[1].delete(0, tk.END)
+                    time[1].insert(0, str(time[2]))
+            if time[3] is not None:
+                if time[0] > time[3]:
+                    time[1].delete(0, tk.END)
+                    time[1].insert(0, str(time[3]))
 
 
 if __name__ == "__main__":

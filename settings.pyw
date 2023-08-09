@@ -3,22 +3,33 @@ import main_ui
 import time_box
 import json
 import time
+import os
 from threading import Thread
 from tkinter import messagebox
 
 
+def getPath():
+    return os.path.dirname(os.path.abspath(__file__))
+
+
 class Config:
     def __init__(self, path: str = None) -> None:
-        if path is not None:
+        if path is not None and os.path.exists(path) and os.path.isfile(path) and os.access(path, os.R_OK) and os.access(path, os.W_OK):
             self.path = path
-            self.config = {}
+            self.getConfig()
         else:
+            self.path = f"{getPath()}\\config.json"
             self.config = {"black theme": False,
-                           "time list": [0, 0, 0, 0, 0, 0]}
+                           "time list": [0, 0, 0, 0, 25, 0],
+                           "time mode": 1}
 
     def getConfig(self):
         with open(self.path, 'r') as f:
-            self.config = json.load(f.read())
+            self.config = json.loads(f.read())
+
+    def saveConfig(self):
+        with open(self.path, 'w') as f:
+            f.write(json.dumps(self.config))
 
 
 class Tools:
@@ -45,10 +56,10 @@ class Ui:
 
         # 选择结束于某时长
         self.radioButtonVariable = tk.IntVar()
+        self.radioButtonVariable.set(self.config.config["time mode"])
         self.stopAt_radioButton = tk.Radiobutton(
             self.tk, text="结束于", variable=self.radioButtonVariable, value=0)
         self.stopAt_radioButton.grid(row=0, column=0)
-        self.stopAt_radioButton.select()
 
         # 选择持续某时长
         self.keepLockFor_radioButton = tk.Radiobutton(
@@ -73,6 +84,10 @@ class Ui:
                                       self.set_theme_type(), self.set_duration(), self.saveConfig(), self.start()])
         self.start_button.grid(row=3, column=0, columnspan=12)
 
+        self.changeEdge()
+        # radio button被按下的时候，改变界限
+        self.radioButtonVariable.trace("w", lambda *args: self.changeEdge())
+
     def set_theme_type(self):
         # 由于在上面的代码中，radio button的浅色的值为0，深色的值为1，所以可以用列表来快速设置
         self.config.config["black theme"] = [
@@ -81,7 +96,7 @@ class Ui:
     def set_duration(self):
         # 设置持续时长
         try:
-            self.timeBox.setTime()
+            self.timeBox.getTime()
             self.config.config["time list"] = self.Time.timeList
             self.canStart = True
         except ValueError:
@@ -97,8 +112,7 @@ class Ui:
             return
 
     def saveConfig(self):
-        with open("config.json", 'w') as f:
-            f.write(json.dumps(self.config.config))
+        self.config.saveConfig()
 
     def start(self):
         if self.canStart:
@@ -115,10 +129,20 @@ class Ui:
             print(time.localtime(endtime))
             # lock_ui = main_ui.Ui(endtime, self.config.config["black theme"])
             # lock_ui.begin()
+            self.tk.destroy()
             main_ui.Ui(endtime, self.config.config["black theme"]).begin()
+
+    def changeEdge(self):
+        self.config.config["time mode"] = self.radioButtonVariable.get()
+        if self.radioButtonVariable.get() == 0:
+            self.timeBox.setEdge(time.localtime(time.time())[
+                                 :6], [None, 12, 31, 23, 59, 59])
+        else:
+            self.timeBox.setEdge([0, 0, 0, 0, 0, 0], [
+                                 None, 12, 31, 23, 59, 59])
 
 
 if __name__ == "__main__":
-    config = Config()
+    config = Config(f'{getPath()}\\config.json')
     ui = Ui(config)
     ui.tk.mainloop()
