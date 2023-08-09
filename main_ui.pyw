@@ -2,8 +2,7 @@ import tkinter as tk
 import threading
 import time
 import os
-from pyautogui import FAILSAFE
-from pyautogui import size, keyDown, keyUp
+import pyautogui
 import json
 
 
@@ -29,7 +28,8 @@ class Ui:
         self.window.title("番茄钟")
 
         # 设置框架，点击窗口变色用
-        self.frame = tk.Frame(self.window, width=size()[0], height=size()[1])
+        self.frame = tk.Frame(self.window, width=pyautogui.size()[
+                              0], height=pyautogui.size()[1])
         self.frame.bind(
             "<Button-1>", self.change_color)
 
@@ -63,12 +63,12 @@ class Ui:
 
     def begin(self):
         self.run = True
-        FAILSAFE = False
+        pyautogui.FAILSAFE = False
         threading.Thread(target=self.autoChange).start()
         threading.Thread(target=self.keep_topmost_and_press_key).start()
         # 按下功能键
         for key in self.press_keys:
-            keyDown(key)
+            pyautogui.keyDown(key)
         print('mainloop')
         self.window.mainloop()
 
@@ -77,7 +77,7 @@ class Ui:
             self.run = False
             self.window.destroy()
             for key in self.press_keys:
-                keyUp(key)
+                pyautogui.keyUp(key)
             return
 
         if self.run:
@@ -105,8 +105,8 @@ class Ui:
                 break
             self.window.attributes("-topmost", True)
             for key in self.press_keys:
-                keyUp(key)
-                keyDown(key)
+                pyautogui.keyUp(key)
+                pyautogui.keyDown(key)
 
     def getTime(self):
         time_left = self.endtime - time.time()

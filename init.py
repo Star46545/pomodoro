@@ -10,14 +10,13 @@ def getPath():
 
 
 if __name__ == "__main__":
-    if not os.path.exists(f'{startupPath}\\main_ui.pyw'):
-        try:
-            shutil.copy(f'{getPath()}\\main_ui.pyw',
-                        f'{startupPath}\\main_ui.pyw')
-        except IOError as err:
-            print(f'发生了错误:IOError:{err}')
-        except:
-            print('发生了未知错误，你也许可以尝试使用管理员权限运行我(这不一定能解决问题！)')
+    try:
+        with open(f'{startupPath}\\pomodoro.pyw', 'w') as f:
+            f.write(f'import os\nos.startfile("{getPath()}\\main_ui.pyw")')
+    except IOError as err:
+        print(f'发生了错误:IOError:{err}')
+    except:
+        print('发生了未知错误，你也许可以尝试使用管理员权限运行我(这不一定能解决问题！)')
 
     if not os.path.exists(f'{getPath()}\\config.json'):
         try:
