@@ -122,10 +122,8 @@ class adjustTimeButtonGroup(tk.Frame):
             old = int(entry.get())
 
             # self.max是None代表没有最高
-            if self.max is None:
-                return
 
-            if old < self.max:
+            if self.max is None or old < self.max:
                 entry.delete(0, tk.END)
                 entry.insert(0, str(old+1))
             elif old > self.max:
@@ -139,10 +137,8 @@ class adjustTimeButtonGroup(tk.Frame):
             old = int(entry.get())
 
             # self.min是None代表没有最低
-            if self.min is None:
-                return
 
-            if old > self.min:
+            if self.min is None or old > self.min:
                 entry.delete(0, tk.END)
                 entry.insert(0, str(old-1))
             elif old < self.min:
