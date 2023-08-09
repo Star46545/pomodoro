@@ -10,10 +10,10 @@ def getPath():
 
 
 if __name__ == "__main__":
-    if not os.path.exists(f'{startupPath}\\main_ui.py'):
+    if not os.path.exists(f'{startupPath}\\main_ui.pyw'):
         try:
-            shutil.copy(f'{getPath()}\\main_ui.py',
-                        f'{startupPath}\\main_ui.py')
+            shutil.copy(f'{getPath()}\\main_ui.pyw',
+                        f'{startupPath}\\main_ui.pyw')
         except IOError as err:
             print(f'发生了错误:IOError:{err}')
         except:
