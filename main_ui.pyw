@@ -1,7 +1,14 @@
 import tkinter as tk
 import threading
 import time
+import os
+from pyautogui import FAILSAFE
 from pyautogui import size, keyDown, keyUp
+import json
+
+
+def getPath():
+    return os.path.dirname(os.path.abspath(__file__))
 
 
 class Ui:
@@ -56,6 +63,7 @@ class Ui:
 
     def begin(self):
         self.run = True
+        FAILSAFE = False
         threading.Thread(target=self.autoChange).start()
         threading.Thread(target=self.keep_topmost_and_press_key).start()
         # 按下功能键
@@ -123,6 +131,11 @@ class Ui:
 
 
 if __name__ == "__main__":
-    ui = Ui(time.time() + 1500, black_color=True)
-    # ui = Ui(time.time() + 3)
-    ui.begin()
+    if os.path.exists("task.json"):
+        with open("task.json", "r", encoding="utf-8") as f:
+            task = json.loads(f.read())
+    else:
+        exit()
+    if task["end time"] > time.time():
+        ui = Ui(task["end time"], task["black theme"])
+        ui.begin()

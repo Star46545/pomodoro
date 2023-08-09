@@ -48,6 +48,7 @@ class Ui:
         self.black_theme = self.config.config["black theme"]
         self.timeList = self.config.config["time list"]
         self.canStart = True
+        self.endtime = None
         self.Time = time_box.Time(
             self.timeList[0], self.timeList[1], self.timeList[2], self.timeList[3], self.timeList[4], self.timeList[5])
 
@@ -111,26 +112,33 @@ class Ui:
             self.canStart = False
             return
 
-    def saveConfig(self):
-        self.config.saveConfig()
-
-    def start(self):
         if self.canStart:
             timestamp = self.duration
             if self.radioButtonVariable.get() == 0:
                 if time.time() < timestamp:
-                    endtime = timestamp
+                    self.endtime = timestamp
                 else:
                     messagebox.showerror("错误", "结束时间早于现在")
                     return
             else:
-                endtime = int(time.time()) + timestamp
+                self.endtime = int(time.time()) + timestamp
 
-            print(time.localtime(endtime))
+    def saveConfig(self):
+        if self.canStart:
+            self.config.saveConfig()
+            with open(f"{getPath()}\\task.json", 'w') as f:
+                taskData = {"end time": self.endtime,
+                            "black theme": self.config.config["black theme"],
+                            }
+                f.write(json.dumps(taskData))
+
+    def start(self):
+        if self.canStart:
+            print(time.localtime(self.endtime))
             # lock_ui = main_ui.Ui(endtime, self.config.config["black theme"])
             # lock_ui.begin()
             self.tk.destroy()
-            main_ui.Ui(endtime, self.config.config["black theme"]).begin()
+            main_ui.Ui(self.endtime, self.config.config["black theme"]).begin()
 
     def changeEdge(self):
         self.config.config["time mode"] = self.radioButtonVariable.get()
