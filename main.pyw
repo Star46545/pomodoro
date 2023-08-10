@@ -1,5 +1,5 @@
 import tkinter as tk
-import main_ui
+import pomodoro
 import time_box
 import json
 import time
@@ -136,10 +136,11 @@ class Ui:
     def start(self):
         if self.canStart:
             print(time.localtime(self.endtime))
-            # lock_ui = main_ui.Ui(endtime, self.config.config["black theme"])
+            # lock_ui = pomodoro.Ui(endtime, self.config.config["black theme"])
             # lock_ui.begin()
             self.tk.destroy()
-            main_ui.Ui(self.endtime, self.config.config["black theme"]).begin()
+            pomodoro.Ui(
+                self.endtime, self.config.config["black theme"]).begin()
 
     def changeEdge(self):
         self.config.config["time mode"] = self.radioButtonVariable.get()
