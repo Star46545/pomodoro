@@ -14,7 +14,7 @@ if __name__ == "__main__":
         try:
             with open(f'{getPath()}\\config.json', 'w') as f:
                 f.write(json.dumps({"time list": [0, 0, 0, 0, 25, 0],
-                                    "black_theme": False,
+                                    "black theme": False,
                                     "time mode": 1
                                     }))
         except Exception as err:
